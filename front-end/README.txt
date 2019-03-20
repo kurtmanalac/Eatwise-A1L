@@ -1,0 +1,1 @@
+add "proxy": "http://localhost:3000/" to package.json if not exists
