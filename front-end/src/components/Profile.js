@@ -5,38 +5,40 @@ class Profile extends Component {
     constructor() {
         super()
         this.state = {
-            first_name: '',
-            last_name: '',
+            username: '',
+            display_name: '',
             email: ''
         }
     }
 
     componentDidMount () {
-        const token = localStorage.usertoken
-        const decoded = jwt_decode(token)
+        var token = localStorage.usertoken
+        console.log(token)
+        var decoded = jwt_decode(token)
+        console.log("decoded token")
         this.setState({
-            first_name: decoded.first_name,
-            last_name: decoded.last_name,
-            email: decoded.email,
+            username: decoded.username,
+            display_name: decoded.display_name,
+            email: decoded.email
         })
     }
 
     render () {
         return (
-            <div className="container">
-                <div className="jumbotron mt-5">
-                    <div className="col-sm-8 mx-auto">
-                        <h1 className="text-center">PROFILE</h1>
+            <div>
+                <div>
+                    <div>
+                        <h1>PROFILE</h1>
                     </div>
-                    <table className="table col-md-6 mx-auto">
+                    <table>
                         <tbody>
                             <tr>
-                                <td>First Name</td>
-                                <td>{this.state.first_name}</td>
+                                <td>Username</td>
+                                <td>{this.state.username}</td>
                             </tr>
                             <tr>
-                                <td>Last Name</td>
-                                <td>{this.state.last_name}</td>
+                                <td>Display Name</td>
+                                <td>{this.state.display_name}</td>
                             </tr>
                             <tr>
                                 <td>Email</td>

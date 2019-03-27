@@ -99,6 +99,194 @@ create table if not exists log_report(
 	primary key(logId)
 );
 
+
+/* VIEW BT TYPE */
+
+DELIMITER $$
+CREATE PROCEDURE viewByType(atype varchar(50))
+DETERMINISTIC
+BEGIN
+	SELECT * from shop where type = atype;
+END $$
+DELIMITER ;
+
+/* VIEW BT RATING */
+
+DELIMITER $$
+CREATE PROCEDURE viewByRating(in param int)
+DETERMINISTIC
+BEGIN
+	SELECT * from shopRates where avgRating >= param;
+END $$
+DELIMITER ;
+
+/* ADD USER */
+
+DELIMITER //
+CREATE PROCEDURE addUser(
+aadminAccess boolean,
+ausername varchar(50),
+aemail varchar(50),
+adisplayName varchar(50),
+apassword BLOB,
+alocation varchar(50)
+)
+BEGIN
+	insert into user(adminAccess, username, email, displayName, password, location) values (aadminAccess, ausername, aemail, adisplayName, AES_ENCRYPT(apassword, 'secret'), alocation);
+END	//
+DELIMITER ;
+
+/* ADD SHOP */
+
+DELIMITER //
+CREATE PROCEDURE addShop(
+	aname varchar(50),
+	aavgPrice varchar(50),
+	atype varchar(50),
+	alocation varchar(50),
+	adescription varchar(50),
+	amenu varchar(50),
+	votes int(5)
+)
+BEGIN
+	insert into shop(name, avgPrice, type, location, description, menu, votes) values (aname, aavgPrice, atype, alocation, adescription, amenu, 0);
+END	//
+DELIMITER ;
+
+/* ADD REPORT */
+
+DELIMITER |
+CREATE PROCEDURE addReport(
+	auserId int(5),
+	ashopId int(5),
+	-- ausername varchar(50),
+	areason varchar(150)
+)
+BEGIN
+	insert into report(userId, shopId, reason) values (auserId, ashopId, areason);
+END	|
+DELIMITER ;
+
+/* ADD REVIEWS */
+
+DELIMITER |
+CREATE PROCEDURE addReview(
+	auserId int(5),
+	ashopId int(5),
+	areason varchar(150)
+)
+BEGIN
+	insert into review(userId, shopId, reason) values (auserId, ashopId, areason);
+END	|
+DELIMITER ;
+
+/* EDIT SHOP */
+
+DELIMITER |
+CREATE PROCEDURE editShop(
+	ashopId int(5),
+	aname varchar(50),
+	aavgPrice varchar(50),
+	atype varchar(50),
+	alocation varchar(50),
+	adescription varchar(50)
+)
+BEGIN
+	update shop
+	set name = aname, avgPrice = aavgPrice, type = atype, location = alocation, description = adescription
+	where shopId = ashopId;
+END	|
+DELIMITER ;
+
+/* DELETE SHOP */
+
+DELIMITER |
+CREATE PROCEDURE deleteShop(
+	dshopId varchar(50)
+)
+BEGIN
+	delete from shop where shopId = dshopId;
+END	|
+DELIMITER ;
+
+/* DELETE REPORT */
+
+DELIMITER |
+CREATE PROCEDURE deleteReport(
+	duserId int(5),
+	dshopId int(5)
+)
+BEGIN
+	delete from report where userId = duserId and shopId = dshopId;
+END	|
+DELIMITER ;
+
+/* DELETE REVIEW */
+
+DELIMITER |
+CREATE PROCEDURE deleteReview(
+	duserId int(5),
+	dshopId int(5)
+)
+BEGIN
+	delete from review where userId = duserId and shopId = dshopId;
+END	|
+DELIMITER ;
+
+/* VIEW REPORTS */
+
+DELIMITER |
+CREATE PROCEDURE viewReports()
+BEGIN
+	select s.name, u.displayname, r.reason, r.reportCreation 
+	from report r
+	INNER JOIN user u on u.userId = r.userId 
+	INNER JOIN shop s on s.shopId = r.shopId
+	order by r.shopId;
+
+END	|
+DELIMITER ;
+
+/* VIEW REVIEWS */
+
+DELIMITER |
+CREATE PROCEDURE viewReviews()
+BEGIN
+	select s.name, u.displayname, r.reason, r.reportCreation 
+	from report r
+	INNER JOIN user u on u.userId = r.userId 
+	INNER JOIN shop s on s.shopId = r.shopId
+	order by r.shopId;
+END	|
+DELIMITER ;
+
+/* RANDOMIZER */
+
+DELIMITER |
+CREATE PROCEDURE randomize()
+BEGIN
+	select * from shop
+	order by rand()
+	limit 1;
+END |
+DELIMITER ;
+
+/* FUNCTION TO CALCULATE AVERAGE RATING */
+
+DELIMITER //
+CREATE FUNCTION calcAvgRating(sId INT)
+RETURNS INT DETERMINISTIC
+BEGIN
+	DECLARE avgRating FLOAT;
+	SET avgRating = (select avg(rating) from review where shopId = sId);
+
+	RETURN avgRating;
+END //
+
+DELIMITER ;
+
+/**************** END OF PROCEDURES AND FUNCTIONS ****************/
+
 insert into user (userId, adminAccess, username, email, displayName, password, location) values (1, false, 'cchambers0', 'cc@gmail.com', 'Crosby', 'AeA60qT1Ms', 'Taranovskoye');
 insert into user (userId, adminAccess, username, email, displayName, password, location) values (2, false, 'gjensen1', 'cc@gmail.com', 'Gordon', 'RlsFC2Q', 'Dalmeny');
 insert into user (userId, adminAccess, username, email, displayName, password, location) values (3, false, 'hpaish2', 'cc@gmail.com', 'Hewe', 'WGkQiejkPV5', 'Mahendranagar');
@@ -149,3 +337,56 @@ insert into user (userId, adminAccess, username, email, displayName, password, l
 insert into user (userId, adminAccess, username, email, displayName, password, location) values (48, true, 'sscutter1b', 'cc@gmail.com', 'Sid', 'CQ1A7HW', 'Stoney Ground');
 insert into user (userId, adminAccess, username, email, displayName, password, location) values (49, true, 'candrivel1c', 'cc@gmail.com', 'Craig', 'CrRhTP', 'Communal');
 insert into user (userId, adminAccess, username, email, displayName, password, location) values (50, false, 'rdhooge1d', 'cc@gmail.com', 'Ronny', 'bLd7PjdXF', 'Xiaozhi');
+
+	call addShop('Plambee', 117, 'Honduran', '6 Grayhawk Terrace', '', 'Italian', 5023);
+call addShop('Tagchat', 118, 'Pueblo', '26966 Sachtjen Trail','', 'Japanese', 8282);
+call addShop('Skinte', 209, 'Hmong', '09 Sachs Point', '', 'Japanese', 476);
+call addShop('Brainbox', 53, 'Alaska Native', '736 Esker Street','', 'Korean', 5656);
+call addShop('Zooveo', 74, 'Cambodian', '57 Stoughton Circle', '',  'Korean', 829);
+call addShop('Zoonoodle', 241, 'Pakistani', '17 Forest Crossing', '',  'Korean', 3497);
+call addShop('Yotz', 138, 'Sri Lankan', '80 Old Shore Terrace', '', 'Japanese', 5521);
+call addShop('Riffwire', 95, 'Central American', '6 Stang Parkway', '', 'Filipino Cuisine', 1840);
+call addShop('Muxo', 118, 'Lumbee', '4939 Prairieview Place', '', 'Italian',3625);
+call addShop('Eazzy', 162, 'Bangladeshi', '8 Kipling Court', '', 'Filipino Cuisine', 2475);
+call addShop('Kwideo', 97, 'American Indian and Alaska Native (AIAN)', '5 Merrick Terrace', '', 'Filipino Cuisine', 7984);
+call addShop('Realblab', 65, 'Cambodian', '57704 Menomonie Drive', '', 'Filipino Cuisine', 8337);
+call addShop('Skipfire', 192, 'Black or African American', '253 Sunbrook Place', '', 'Filipino Cuisine', 8086);
+call addShop('Skibox', 114, 'Japanese', '0 Buell Circle', '', 'Filipino Cuisine', 9603);
+call addShop('Myworks', 210, 'Peruvian', '8672 Helena Terrace', '', 'Japanese', 6006);
+call addShop('Oozz', 239, 'Guatemalan', '028 Prairie Rose Circle', '', 'Filipino Cuisine', 1089);
+call addShop('Devshare', 228, 'Asian', '25 Jay Junction', '', 'Filipino Cuisine', 5196);
+call addShop('Kimia', 105, 'Alaskan Athabascan', '0 Atwood Alley', '', 'Filipino Cuisine', 1140);
+call addShop('Shufflebeat', 131, 'Cambodian', '31 Moland Center', '', 'Filipino Cuisine', 278);
+call addShop('Skimia', 194, 'Native Hawaiian', '4013 Texas Alley', '',  'Japanese', 3660);
+call addShop('Riffwire', 106, 'Shoshone', '489 Garrison Circle', '', 'Filipino Cuisine', 7820);
+call addShop('Thoughtstorm', 159, 'Bangladeshi', '884 Summerview Center', '', 'Filipino Cuisine', 515);
+call addShop('Brightbean', 210, 'Tlingit-Haida', '8351 Commercial Point', '', 'Filipino Cuisine', 4545);
+call addShop('Kwilith', 173, 'Polynesian', '813 Hanover Hill', '', 'Filipino Cuisine', 8930);
+call addShop('Trunyx', 153, 'Ute', '5039 Daystar Drive', '', 'Italian', 9388);
+call addShop('Eazzy', 181, 'Costa Rican', '16084 Del Sol Center', '', 'Filipino Cuisine', 9094);
+call addShop('Photobug', 239, 'Indonesian', '73 Moulton Road', '', 'Italian', 9398);
+call addShop('Flashset', 203, 'Indonesian', '1 Roxbury Avenue', '', 'Filipino Cuisine', 9321);
+call addShop('Trunyx', 222, 'White', '181 Brentwood Crossing', '', 'Italian', 2693);
+call addShop('Brightdog', 213, 'Comanche', '09 Laurel Court', '', 'Italian', 4581);
+call addShop('Linkbridge', 59, 'Blackfeet', '0 Kipling Center', '', 'Korean', 2402);
+call addShop('Riffpedia', 219, 'Seminole', '4 Farragut Crossing', '', 'Korean', 926);
+call addShop('Kwilith', 58, 'Alaska Native', '71 Erie Place', '', 'Japanese', 8384);
+call addShop('Fatz', 61, 'Colville', '3 Ohio Pass', '', 'Filipino Cuisine', 7005);
+call addShop('Tagtune', 235, 'Tongan', '80564 Everett Park', '', 'Italian', 3968);
+call addShop('Skimia', 147, 'Tlingit-Haida', '68 Fuller Pass', '', 'Filipino Cuisine', 5865);
+call addShop('Brainlounge', 104, 'Cuban', '94 Harper Parkway', '', 'Filipino Cuisine', 627);
+call addShop('Abatz', 161, 'Choctaw', '9 Pond Court', '', 'Filipino Cuisine', 9548);
+call addShop('Zoomzone', 180, 'Tlingit-Haida', '42853 Mesta Plaza', '', 'Italian', 6344);
+call addShop('Chatterpoint', 154, 'Paraguayan', '366 Oakridge Lane', '', 'Filipino Cuisine', 7581);
+call addShop('Flipopia', 246, 'Seminole', '5 Hanover Alley', '', 'Japanese', 281);
+call addShop('Skipstorm', 155, 'Bolivian', '92 Grasskamp Street', '', 'Filipino Cuisine', 3526);
+call addShop('Youspan', 163, 'Pueblo', '0 Judy Lane', '', 'Filipino Cuisine', 8287);
+call addShop('Mynte', 156, 'Venezuelan', '6 Oakridge Park', '', 'Italian', 3056);
+call addShop('Vipe', 64, 'Peruvian', '3 Ohio Pass', '', 'Filipino Cuisine', 9035);
+call addShop('Buzzster', 113, 'Houma', '4066 Dorton Crossing', '', 'Filipino Cuisine', 9379);
+call addShop('Talane', 202, 'Micronesian', '10002 Rockefeller Way', '', 'Filipino Cuisine', 9443);
+call addShop('Youtags', 212, 'Asian', '86133 Mcbride Crossing', '', 'Filipino Cuisine', 5);
+call addShop('Mudo', 96, 'Choctaw', '845 Stephen Parkway', '', 'Italian', 6560);
+call addShop('Zooxo', 248, 'Comanche', '06644 Dayton Alley', '', 'Italian', 7824);
+call addShop('Jollibee', '200-300', 'Fast Food', 'Grove', 'Jolly happy', 'Filipino Food', 0);
+call addShop('Mcdo', '100-300', 'Fast Food', 'Grove', 'Clown Happy', 'Filipino Food', 0);

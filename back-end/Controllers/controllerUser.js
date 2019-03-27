@@ -1,21 +1,65 @@
+const jwt = require("jsonwebtoken")
+const bcryptjs = require("bcryptjs")
 
+process.env.SECRET_KEY = 'secret'
 // NOTE: queries will be changer depending on future database procedures
 
 exports.register = function(req, res){
+	var conn = res.locals.connection	
 	const userData = {
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
+        username: req.body.username,
+        display_name: req.body.display_name,
         email: req.body.email,
         password: req.body.password,
+        location: "here"
     }
-    console.log(userData)
+    console.log(userData.username)
+    conn.query('insert into user(adminAccess, username, email, displayName, password, location) values(false, "'+userData.username+'", "'+userData.email+'", "'+userData.display_name+'", "'+userData.password+'", "'+req.body.location+'");', (err, result) => {
+		if(!err){
+			// bcryptjs.hash(req.body.password, 10, (err, hash) => {
+   //          	userData.password = hash
+			// })
+			console.log("Register successful!")
+			res.send(result)
+		}else{
+            return res.send(400, 'Couldnt get a connection');
+        }
+	})
+}
+
+exports.login = function(req, res){
+	var conn = res.locals.connection	
+	console.log(req.body.email)
+    conn.query('select * from user where email = "'+req.body.email+'";', (err, result) => {
+		if(!err){
+			if (bcryptjs.compareSync(req.body.password, result[0].password)) {
+					console.log("creating token")
+                    const payload = {
+                        // _id: result[0].userId,
+                        username: result[0].username,
+                        display_name: result[0].display_name,
+                        email: result[0].email
+                    }
+                    let token = jwt.sign(payload, process.env.SECRET_KEY, {
+                        expiresIn: 1440
+                    })
+                    console.log("Logged in!!!")
+                    console.log(token)
+                    res.send(token)
+                } else {
+                    res.json({ error: "User does not exist" })
+                }
+		}else{
+            return res.send(400, 'Couldnt get a connection');
+        }
+	})
 }
 
 exports.viewUsers = function(req, res){
 	var conn = res.locals.connection
 	conn.query('select * from user;', (err, result) => {
 		if(!err){
-			console.log(result)
+			console.log(result[0].password)
 			res.send(result)
 		}else{
             return res.send(400, 'Couldnt get a connection');

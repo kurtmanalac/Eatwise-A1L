@@ -3,10 +3,10 @@ import axios from 'axios'
 export const register = newUser => {
     return axios
         .post('/home/register', {
-            first_name: newUser.first_name,
-            last_name: newUser.last_name,
+            username: newUser.username,
+            display_name: newUser.display_name,
             email: newUser.email,
-            password: newUser.password,
+            password: newUser.password
         })
         .then(res => {
             console.log('Registered!')
