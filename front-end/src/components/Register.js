@@ -35,23 +35,25 @@ class Register extends Component {
 
     render () {
         return (
-            <div>
-                <div>
-                    <div>
+            <div className="container">
+                <div className="row">
+                    <div className="col-md-6 mt-5 mx-auto">
                         <form noValidate onSubmit={this.onSubmit}>
-                            <h1>Please sign in</h1>
-                            <div>
-                                <label>Username:</label>
+                            <h1 className="h3 mb-3 font-weight-normal">Sign-up</h1>
+                            <div className="form-group">
+                                <label htmlFor="username">Username:</label>
                                 <input type="text"
-                                    name="username"
+                                    className="form-control"
+                                    name = "username"
                                     placeholder="Enter Username"
                                     value={this.state.username}
                                     onChange={this.onChange} />
                             </div>
-                            <div>
-                                <label>Display Name: </label>
+                            <div className="form-group">
+                                <label htmlFor="display_name">Display Name: </label>
                                 <input type="text"
-                                    name="display_name"
+                                    className="form-control"
+                                    name = "display_name"
                                     placeholder="Enter Display Name"
                                     value={this.state.display_name}
                                     onChange={this.onChange} />
@@ -74,7 +76,10 @@ class Register extends Component {
                                     value={this.state.password}
                                     onChange={this.onChange} />
                             </div>
-                            <button type="submit" >Register</button>
+                            <button type="submit" 
+                                className = "btn btn-lg btn-primary btn-lock">
+                                Register
+                            </button>
                         </form>
                     </div>
                 </div>
