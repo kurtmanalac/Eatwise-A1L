@@ -1,10 +1,11 @@
 const mysql = require('mysql');
 const express = require("express")
-const cors = require("cors")
-const jwt = require("jsonwebtoken")
-const bcryptjs = require("bcryptjs")
 const app = express.Router()
+const cors = require("cors")
+
 app.use(cors())
+
+process.env.SECRET_KEY = 'secret'
 
 let connection = mysql.createConnection({
     host: 'localhost',
@@ -64,11 +65,15 @@ app.post('/login', (req, res, next) => {
 	next()
 }, controllerUser.login)
 
-app.get('/search-shop', (req, res, next) =>{
+app.get('/search-all-shops', (req, res, next) =>{
 	res.locals.connection = connection		
 	next()
 }, controllerShop.searchByName)
 
+app.get('/search-shop', (req, res, next) =>{
+	res.locals.connection = connection		
+	next()
+}, controllerShop.searchByNameAndId)
 
 
 module.exports = app

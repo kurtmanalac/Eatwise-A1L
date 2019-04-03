@@ -1,4 +1,7 @@
 import React, { Component } from 'react'
+import dropdownMenu from './../dropdown.png';
+import './../App.css';
+import { Button } from 'react-bootstrap';
 import { Link, withRouter } from 'react-router-dom'
 
 class Navbar extends Component {
@@ -9,59 +12,35 @@ class Navbar extends Component {
     }
 
     render () {
+        {/*==================== Content of menu changes depending if user is logged in or not ====================*/}
         const loginRegLink = (
-            <ul className="navbar-nav">
-                <li className="nav-item">
-                    <Link to="/login" className="nav-link">
-                        Login
-                    </Link>
-                </li>
-                <li className="nav-item">
-                    <Link to="/register" className="nav-link">
-                        Register
-                    </Link>
-                </li>
-            </ul>
+            <div className="dropdown-menu">
+                <Link to="/" className="dropdown-item"> Home </Link>
+                <Link to="/login"  className="dropdown-item"> Log-in </Link>
+                <Link to="/register"  className="dropdown-item"> Sign-up </Link>
+                {/* <Link to="/login"  class="dropdown-item"> View Restaurants </Link> */}
+            </div>
         )
 
         const userLink = (
-            <ul className="navbar-nav">
-                <li className="nav-item">
-                    <Link to="/profile" className="nav-link">
-                        User
-                    </Link>
-                </li>
-                <li className="nav-item">
-                    <a href="" onClick={this.logOut.bind(this)} className="nav-link">
-                        Logout
-                    </a>
-                </li>
-            </ul>
+            <div className="dropdown-menu">
+                <Link to="/" className="dropdown-item"> Home </Link>
+                <Link to="/profile" className="dropdown-item"> User </Link>
+                <a href="" onClick={this.logOut.bind(this)} className="dropdown-item">Logout</a>
+            </div>
         )
-
+        {/*=======================================================================================================*/}
         return (
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark rounded">
-                <button className="navbar-toggler"
-                    type="button"
-                    data-toggle="collapse"
-                    data-target="#navbar1"
-                    aria-controls="navbar1"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
-                </button>
-
-                <div className="collapse navbar-collapse justify-content-md-center" id="navbar1">
-                    <ul className="navbar-nav">
-                        <li className="nav-item">
-                            <Link to="/" className="nav-link">
-                                Home
-                            </Link>
-                        </li>
-                    </ul>
-                    {localStorage.usertoken ? userLink : loginRegLink}
-                </div>
-            </nav>
+            <div className="App">
+                <header className="App-header">
+                    <div className="dropdown show" className="cdropdown">
+                    <a className="btn btn-danger dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" className="dropdown">
+                      <img src={dropdownMenu} className="dropdownpic" /> 
+                    </a>
+                        {localStorage.usertoken ? userLink : loginRegLink}
+                    </div>
+                </header>
+            </div>
         )
     }
 }

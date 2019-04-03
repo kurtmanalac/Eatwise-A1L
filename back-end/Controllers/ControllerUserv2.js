@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken")
-const bcryptjs = require("bcryptjs")
+const bcrypt = require("bcrypt")
 
 process.env.SECRET_KEY = 'secret'
 // NOTE: queries will be changer depending on future database procedures
@@ -13,17 +13,18 @@ exports.register = function(req, res){
         password: req.body.password,
         location: "here"
     }
-    console.log(userData.username)
-    conn.query('insert into user(adminAccess, username, email, displayName, password, location) values(false, "'+userData.username+'", "'+userData.email+'", "'+userData.display_name+'", "'+userData.password+'", "'+req.body.location+'");', (err, result) => {
-		if(!err){
-			// bcryptjs.hash(req.body.password, 10, (err, hash) => {
-   //          	userData.password = hash
-			// })
-			console.log("Register successful!")
-			res.send(result)
-		}else{
-            return res.send(400, 'Couldnt get a connection');
-        }
+		
+	bcrypt.hash(req.body.password, 10, (err, hash) => {
+    	userData.password = hash
+    	.then()
+    	conn.query('insert into user(adminAccess, username, email, displayName, password, location) values(false, "'+userData.username+'", "'+userData.email+'", "'+userData.display_name+'", "'+userData.password+'", "'+req.body.location+'");', (err, result) => {
+    		if(!err){
+				console.log("Register successful!")
+				res.json({result})
+			}else{
+	            return res.send(400, 'Couldnt get a connection');
+	        }
+    	})
 	})
 }
 
@@ -32,13 +33,13 @@ exports.login = function(req, res){
 	console.log(req.body.email)
     conn.query('select * from user where email = "'+req.body.email+'";', (err, result) => {
 		if(!err){
-			if (req.body.password === result[0].password) {
+			if (bcryptjs.compareSync(req.body.password, result[0].password)) {
 					console.log("creating token")
                     const payload = {
                         // _id: result[0].userId,
                         username: result[0].username,
-                        display_name: result[0].displayName,
-                        email: result[0].email,
+                        display_name: result[0].display_name,
+                        email: result[0].email
                     }
                     let token = jwt.sign(payload, process.env.SECRET_KEY, {
                         expiresIn: 1440

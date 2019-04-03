@@ -87,4 +87,19 @@ exports.searchByName = function(req, res){
 	})
 }
 
+exports.searchByNameAndId = function(req, res){
+	var conn = res.locals.connection 																		// establishes the connection to the database 
+	var shopName = req.query.name																			// saves the shopName of the shop to search
+	var shopId = req.query.id
+	console.log(shopName)
+	conn.query('select * from shop where name = "'+shopName+'" && shopId="'+shopId+'";', (err, result) => { 								// MySQL query to select the shopName from the shop table via shopName
+		if(!err){			 																				// prints the result both on the server and client's side
+			console.log(result)
+			res.send(result)
+		}else{
+			return res.status(400).send('Couldnt get a connection')
+            // return res.send(400, 'Couldnt get a connection');															// returns an error message if the connection fails
+        }
+	})
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

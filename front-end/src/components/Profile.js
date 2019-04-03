@@ -1,5 +1,8 @@
-import React, { Component } from 'react'
+import React, {Component } from 'react'
+import {Link} from 'react-router-dom'
 import jwt_decode from 'jwt-decode'
+import SearchShop from './SearchShop'
+
 
 class Profile extends Component {
     constructor() {
@@ -7,8 +10,13 @@ class Profile extends Component {
         this.state = {
             username: '',
             display_name: '',
-            email: ''
+            email: '',
+            shop: [],
+            shopName: ""
         }
+
+        this.searchShop = this.searchShop.bind(this)
+
     }
 
     componentDidMount () {
@@ -21,6 +29,18 @@ class Profile extends Component {
             display_name: decoded.display_name,
             email: decoded.email
         })
+    }
+    searchShop(e){
+
+      const query = e.target.value;
+
+      fetch('http://localhost:3000/home/search-shop/?name='+query)
+            .then((response) => { return response.json() })
+            .then((result) => {
+                console.log(result)
+                this.setState({shop: result})
+            })
+            .catch((e) => { console.log(e)});
     }
 
     render () {
@@ -46,6 +66,9 @@ class Profile extends Component {
                             </tr>
                         </tbody>
                     </table>
+                    <SearchShop/>
+
+
                 </div>
             </div>
         )

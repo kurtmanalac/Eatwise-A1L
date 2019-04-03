@@ -1,7 +1,10 @@
 // INSTALL APPLICATIONS TO BE USED ========================================================================
 	1.) install mariadb
 			https://computingforgeeks.com/install-mariadb-10-on-ubuntu-18-04-and-centos-7/
-			
+	2.) install nodejs
+			sudo npm cache clean -f
+			sudo npm install -g n
+			sudo n stable
 // LOAD DATABASE ==========================================================================================
 	1.) open mysql/ mariadb by typing in cmd:
 			mysql -u root -p
@@ -24,11 +27,11 @@
 	5.) do the following:
 		npm init								
 		npm install mysql	
-		npm install bcryptjs					
-		npm install express --save 	
+		npm install --save express  	
+		npm install --save express body-parser 	
+		npm install --save express-session
+		npm install bcryptjs			
 		npm install express-jwt			
-		npm install express body-parser --save	
-		npm install express-session
 		npm install request						
 		npm install cors
 
@@ -42,10 +45,12 @@
 		cd front-end
 	
 	9.) do the following:
-		npm i --save react-router react-router-dom
-		npm install axios --save
+		npm install react-bootstrap
+		npm install --save react-router react-router-dom
+		npm install --save axios
 		npm install jwt-decode
-
+		npm install query-string
+		
 	10.) copy files from back-end and front-end folders from team drive to your local back-end and front-end folders
 		10.1.) for the back-end subfolder copy the following:
 				Controllers 		(folder)
